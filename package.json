@@ -4,7 +4,11 @@
   "description": "A modular interface for smart mirrors.",
   "main": "js/electron.js",
   "scripts": {
-    "start": "electron js/electron.js"
+    "start": "electron js/electron.js",
+    "jscs": "jscs **/**/**/**/*.js",
+    "stylelint": "stylelint css/main.css fonts/roboto.css",
+    "htmlvalidator": "html-validator --file=index.html",
+    "test": "snyk test"
   },
   "repository": {
     "type": "git",
@@ -24,7 +28,9 @@
   },
   "homepage": "https://github.com/MichMich/MagicMirror#readme",
   "devDependencies": {
-    "electron-prebuilt": "latest"
+    "electron-prebuilt": "latest",
+    "stylelint": "latest",
+    "stylelint-config-standard": "latest"
   },
   "dependencies": {
     "express": "latest",
@@ -33,9 +39,8 @@
     "iconv-lite": "latest",
     "moment": "latest",
     "request": "latest",
+    "snyk": "^1.13.2",
     "socket.io": "latest",
-    "stylelint": "^5.2.1",
-    "stylelint-config-standard": "^4.0.1",
     "valid-url": "latest",
     "walk": "latest"
   }
