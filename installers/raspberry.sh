@@ -32,7 +32,7 @@ cd ~ || exit
 rm -Rf ~/.MagicMirrorInstaller || exit
 
 echo "Cloning MagicMirror ..."
-git clone -b v2-beta https://github.com/MichMich/MagicMirror.git || exit
+git clone -b v2-beta-custom https://github.com/florianporada/MagicMirror.git || exit
 cd ~/MagicMirror  || exit
 npm install || exit
 echo "We're ready! Run [DISPLAY=:0 npm start] from the MagicMirror directory."
