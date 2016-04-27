@@ -35,14 +35,14 @@ var config = {
 		},
 		{
 			module: 'compliments',
-			position: 'lower_third',
+			position: 'lower_third'
 		},
 		{
 			module: 'currentweather',
 			position: 'top_right',
 			config: {
-				location: 'New York',
-				appid: 'YOUR_OPENWEATHER_API_KEY'
+				location: 'Schondra',
+				appid: 'a4739f8834ed58759d4d3adc7ae7ff8c'
 			}
 		},
 		{
@@ -50,7 +50,7 @@ var config = {
 			position: 'top_right',
 			header: 'Weather Forecast',
 			config: {
-	            location: 'New York',
+	            location: 'Schondra',
 	            appid: 'abf8ee9c8ddb8123f579247987b94d8f'
 			}
 		},
@@ -58,7 +58,7 @@ var config = {
 			module: 'newsfeed',
 			position: 'bottom_bar',
 			config: {
-				feedUrl: 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
+				feedUrl: 'http://www.spiegel.de/schlagzeilen/tops/index.rss',
 				showPublishDate: true,
 			}
 		},
