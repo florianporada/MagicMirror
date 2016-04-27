@@ -5,7 +5,7 @@
  * MIT Licensed.
  */
 
-var ical = require("ical");
+var ical = require("./vendor/ical.js");
 var moment = require("moment");
 
 var CalendarFetcher = function(url, reloadInterval, maximumEntries, maximumNumberOfDays) {
@@ -43,8 +43,6 @@ var CalendarFetcher = function(url, reloadInterval, maximumEntries, maximumNumbe
 				var today = moment().startOf("day").toDate();
 				var future = moment().startOf("day").add(maximumNumberOfDays, "days").subtract(1,"seconds").toDate(); // Subtract 1 second so that events that start on the middle of the night will not repeat.
 
-				
-
 				// FIXME:
 				// Ugly fix to solve the facebook birthday issue.
 				// Otherwise, the recurring events only show the birthday for next year.
@@ -57,6 +55,8 @@ var CalendarFetcher = function(url, reloadInterval, maximumEntries, maximumNumbe
 
 				if (event.type === "VEVENT") {
 
+					//console.log(event);
+
 					var startDate = (event.start.length === 8) ? moment(event.start, "YYYYMMDD") : moment(new Date(event.start));
 					var endDate;
 					if (typeof event.end !== "undefined") {
@@ -65,40 +65,28 @@ var CalendarFetcher = function(url, reloadInterval, maximumEntries, maximumNumbe
 						endDate = startDate;
 					}
 
+					// calculate the duration f the event for use with recurring events.
+					var duration = parseInt(endDate.format("x")) - parseInt(startDate.format("x"));
+
 					if (event.start.length === 8) {
 						startDate = startDate.startOf("day");
 					}
 
 					if (typeof event.rrule != "undefined" && !isFacebookBirthday) {
 						var rule = event.rrule;
-						// console.log("Repeating event ...");
-						
-						// Check if the timeset is set to this current time.
-						// If so, the RRULE line does not contain any BYHOUR, BYMINUTE, BYSECOND params.
-						// This causes the times of the recurring event to be incorrect.
-						// By adjusting the timeset property, this issue is solved.
-
-						
-						if (rule.timeset[0].hour == now.getHours(),
-							rule.timeset[0].minute == now.getMinutes(),
-							rule.timeset[0].second == now.getSeconds()) {
-
-							rule.timeset[0].hour = startDate.format("H");
-							rule.timeset[0].minute = startDate.format("m");
-							rule.timeset[0].second = startDate.format("s");
-						}
-
-						rule.options.dtstart = startDate.toDate();
 						var dates = rule.between(today, future, true, limitFunction);
-						
+
 						for (var d in dates) {
 							startDate = moment(new Date(dates[d]));
-							newEvents.push({
-								title: (typeof event.summary.val !== "undefined") ? event.summary.val : event.summary,
-								startDate: startDate.format("x"),
-								endDate: endDate.format("x"),
-								fullDayEvent: isFullDayEvent(event)
-							});
+							endDate  = moment(parseInt(startDate.format("x")) + duration, 'x');
+							if (endDate.format("x") > now) {
+								newEvents.push({
+									title: (typeof event.summary.val !== "undefined") ? event.summary.val : event.summary,
+									startDate: startDate.format("x"),
+									endDate: endDate.format("x"),
+									fullDayEvent: isFullDayEvent(event)
+								});
+							}
 						}
 					} else {
 						// console.log("Single event ...");
@@ -111,7 +99,7 @@ var CalendarFetcher = function(url, reloadInterval, maximumEntries, maximumNumbe
 							continue;
 						}
 
-						if (fullDayEvent && endDate < today) {
+						if (fullDayEvent && endDate <= today) {
 							//console.log("It's a fullday event, and it is before today. So skip: " + title);
 							continue;
 						}
@@ -136,6 +124,8 @@ var CalendarFetcher = function(url, reloadInterval, maximumEntries, maximumNumbe
 			newEvents.sort(function(a, b) {
 				return a.startDate - b.startDate;
 			});
+
+			//console.log(newEvents);
 
 			events = newEvents.slice(0, maximumEntries);
 
